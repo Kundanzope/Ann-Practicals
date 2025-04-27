@@ -1,0 +1,68 @@
+import numpy as np
+
+class NeuralNetwork:
+    def __init__(self, X, y):
+        self.X = X
+        self.y = y
+        self.weights1 = np.random.rand(self.X.shape[1], 2)
+        self.weights2 = np.random.rand(2, 1)
+        self.bias1 = np.random.rand(1, 2)
+        self.bias2 = np.random.rand(1, 1)
+
+    def sigmoid(self, x):
+        return 1 / (1 + np.exp(-x))
+
+    def sigmoid_derivative(self, x):
+        return x * (1 - x)
+
+    def forward(self):
+        self.hidden_input = np.dot(self.X, self.weights1) + self.bias1
+        self.hidden_output = self.sigmoid(self.hidden_input)
+        self.output_input = np.dot(self.hidden_output, self.weights2) + self.bias2
+        self.output = self.sigmoid(self.output_input)
+
+    def backward(self):
+        error = self.y - self.output
+        output_delta = error * self.sigmoid_derivative(self.output)
+        hidden_error = output_delta.dot(self.weights2.T)
+        hidden_delta = hidden_error * self.sigmoid_derivative(self.hidden_output)
+        self.weights2 += self.hidden_output.T.dot(output_delta)
+        self.bias2 += np.sum(output_delta, axis=0, keepdims=True)
+        self.weights1 += self.X.T.dot(hidden_delta)
+        self.bias1 += np.sum(hidden_delta, axis=0, keepdims=True)
+
+    def train(self, epochs):
+        for epoch in range(epochs):
+            self.forward()
+            self.backward()
+            if epoch % 1000 == 0:
+                loss = np.mean(np.square(self.y - self.output))
+                print(f"Epoch {epoch} - Loss: {loss}")
+
+X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+y = np.array([[0], [1], [1], [0]])
+
+nn = NeuralNetwork(X, y)
+nn.train(epochs=10000)
+
+print("\nFinal predicted output:")
+print(nn.output)
+
+
+output:
+Epoch 0 - Loss: 0.37456381800130556
+Epoch 1000 - Loss: 0.00635574154206623
+Epoch 2000 - Loss: 0.0011833719731494398
+Epoch 3000 - Loss: 0.0006294237192418569
+Epoch 4000 - Loss: 0.00042490312505080713
+Epoch 5000 - Loss: 0.00031944599592076417
+Epoch 6000 - Loss: 0.0002553833443234195
+Epoch 7000 - Loss: 0.00021244432980131774
+Epoch 8000 - Loss: 0.00018170653180438618
+Epoch 9000 - Loss: 0.00015864028443809665
+
+Final predicted output:
+[[0.01318148]
+ [0.98871873]
+ [0.98873066]
+ [0.01161334]]

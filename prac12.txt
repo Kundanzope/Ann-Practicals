@@ -1,0 +1,116 @@
+!pip install tensorflow
+
+
+import numpy as np
+from tensorflow.keras.datasets import mnist
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
+
+mnist
+
+
+(X_train, Y_train), (X_test, Y_test) = mnist.load_data()
+
+
+X_train.shape
+
+
+X_test.shape
+
+
+X_train[0]
+
+
+for i in range(9):
+    plt.subplot(330 + 1 + i)
+    plt.imshow(X_train[i], cmap=plt.get_cmap('gray'))
+plt.show()
+
+
+
+X_train_r = X_train.reshape(X_train.shape[0], X_train.shape[2], X_train.shape[2], 1)
+
+
+X_test_r = X_test.reshape(X_test.shape[0], X_test.shape[2], X_test.shape[2], 1)
+
+
+X_train_r = tf.keras.utils.normalize(X_train_r, axis = 1)
+
+
+X_test_r = tf.keras.utils.normalize(X_test_r, axis = 1)
+
+
+for i in range(9):
+  plt.subplot(330 + 1 + i)
+  plt.imshow(np.squeeze(X_train_r[i]), cmap=plt.get_cmap('gray'))
+plt.show()
+
+
+image_shape = X_train_r.shape[1:]
+
+
+print(image_shape)
+
+
+model = model = tf.keras.models.Sequential()
+
+
+model.add(tf.keras.layers.Conv2D(48, (3,3), activation = tf.nn.relu, input_shape = image_shape))
+
+
+model.add(tf.keras.layers.MaxPool2D((2,2)))
+
+
+model.add(tf.keras.layers.Conv2D(64, (3,3), activation = tf.nn.relu))
+
+
+model.add(tf.keras.layers.MaxPool2D((2,2)))
+
+
+model.add(tf.keras.layers.Dropout(0.5))
+
+
+model.add(tf.keras.layers.Flatten())
+
+
+model.add(tf.keras.layers.Dense(256, activation = tf.nn.relu))
+
+
+model.add(tf.keras.layers.Dense(10, activation = tf.nn.softmax))
+
+
+model.compile(optimizer = 'adam', loss = 'sparse_categorical_crossentropy', metrics = ['accuracy'])
+model.fit(X_train_r, Y_train, epochs = 10)
+
+
+model.summary()
+
+
+from tensorflow.keras.utils import plot_model
+plot_model(model, 'model.jpg', show_shapes = True)
+
+
+
+val_loss, val_accuracy = model.evaluate(X_test, Y_test)
+print("Validation loss : ", val_loss*100, "%")
+print("Validation accuracy : ", val_accuracy*100,"%")
+
+
+model.save('/content/drive/MyDrive/Machine Learning Projects/Mnist.model')
+
+
+new_model = tf.keras.models.load_model("/content/drive/MyDrive/Machine Learning Projects/Mnist.model")
+
+
+predictions = new_model.predict(X_test)
+plt.imshow(X_test[80], cmap = plt.get_cmap('binary'))
+
+
+
+print("The prediction is : ", np.argmax(predictions[80]))
+
+
+
+
+

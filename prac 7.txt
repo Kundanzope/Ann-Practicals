@@ -1,0 +1,39 @@
+import numpy as np
+
+class SimpleART1:
+    def __init__(self, input_size, vigilance=0.8):
+        self.vigilance = vigilance
+        self.categories = []
+
+    def train(self, inputs):
+        for input_vector in inputs:
+            input_vector = np.array(input_vector)
+            matched = False
+
+            for i, category in enumerate(self.categories):
+                match_score = np.sum(np.minimum(input_vector, category)) / np.sum(input_vector)
+                if match_score >= self.vigilance:
+                    print(f"Input {input_vector.tolist()} matched Category {i}")
+                    self.categories[i] = np.minimum(input_vector, category)
+                    matched = True
+                    break
+
+            if not matched:
+                print(f"Input {input_vector.tolist()} starts a new Category {len(self.categories)}")
+                self.categories.append(input_vector.copy())
+inputs = [
+    [1, 1, 0, 0, 1],
+    [1, 1, 0, 0, 0],
+    [0, 0, 1, 1, 1],
+    [0, 0, 1, 1, 0]
+]
+art = SimpleART1(input_size=5, vigilance=0.8)
+art.train(inputs)
+ 
+
+
+output :
+Input [1, 1, 0, 0, 1] starts a new Category 0
+Input [1, 1, 0, 0, 0] matched Category 0
+Input [0, 0, 1, 1, 1] starts a new Category 1
+Input [0, 0, 1, 1, 0] matched Category 1

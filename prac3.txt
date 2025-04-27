@@ -1,0 +1,44 @@
+import numpy as np
+class Perceptron:
+    def __init__(self):
+        self.weights = np.array([-1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -5])
+
+    def activation_fn(self, x):
+        return 1 if x >= 0 else 0
+
+    def predict(self, x):
+        z = np.dot(x, self.weights[1:]) + self.weights[0]
+        return self.activation_fn(z)
+perceptron = Perceptron()
+test_X = np.array([
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 1, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 1, 0],
+    [0, 0, 0, 0, 0, 0, 1, 1, 1, 0],
+    [0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 1, 0, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 1, 1, 1]
+])
+for i, x in enumerate(test_X):
+    result = perceptron.predict(x)
+    label = "odd" if result == 1 else "even"
+    print(f"{x} is {label}")
+
+
+
+
+output:
+
+[0 0 0 0 0 0 1 0 0 0] is odd
+[0 0 0 0 0 0 0 1 0 0] is even
+[0 0 0 0 0 0 0 0 1 0] is odd
+[0 0 0 0 0 0 0 0 0 1] is even
+[0 0 0 0 0 0 1 1 0 0] is even
+[0 0 0 0 0 0 1 0 1 0] is odd
+[0 0 0 0 0 0 1 1 1 0] is odd
+[0 0 0 0 0 0 1 1 1 1] is even
+[0 0 0 0 0 0 1 0 1 1] is even
+[0 0 0 0 0 0 0 1 1 1] is even
